@@ -1,6 +1,7 @@
 package ch.hearc.mbu.repository.link;
 
 import ch.hearc.mbu.repository.note.Note;
+import ch.hearc.mbu.repository.type.Type;
 import jakarta.persistence.*;
 
 import java.awt.*;
@@ -13,13 +14,16 @@ public class Link {
     private Long id;
     private String name;
     private Color color;
-    private int type;
+
+    @ManyToOne
+    @JoinColumn(name = "type_id", referencedColumnName = "id")
+    private Type type;
     @ManyToOne
     @JoinColumn(name = "note_1_id", referencedColumnName = "id")
-    private Note note1Id;
+    private Note note1;
     @ManyToOne
     @JoinColumn(name = "note_2_id", referencedColumnName = "id")
-    private Note note2Id;
+    private Note note2;
 
     //GETTERS AND SETTERS
 
@@ -31,16 +35,16 @@ public class Link {
         return this.color;
     }
 
-    public int getType() {
+    public Type getType() {
         return this.type;
     }
 
-    public Note getNote1Id() {
-        return this.note1Id;
+    public Note getNote1() {
+        return this.note1;
     }
 
-    public Note getNote2Id() {
-        return this.note2Id;
+    public Note getNote2() {
+        return this.note2;
     }
 
     public void setName(String name) {
@@ -51,15 +55,15 @@ public class Link {
         this.color = color;
     }
 
-    public void setType(int type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
-    public void setNote1Id(Note note1Id) {
-        this.note1Id = note1Id;
+    public void setNote1(Note note1) {
+        this.note1 = note1;
     }
 
-    public void setNote2Id(Note note2Id) {
-        this.note2Id = note2Id;
+    public void setNote2(Note note2) {
+        this.note2 = note2;
     }
 }
