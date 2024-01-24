@@ -26,7 +26,9 @@ public class Link {
     private Note note2;
 
     //GETTERS AND SETTERS
-
+    public Long getId() {
+        return this.id;
+    }
     public String getName() {
         return this.name;
     }
