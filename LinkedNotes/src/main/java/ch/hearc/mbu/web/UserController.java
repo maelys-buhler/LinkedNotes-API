@@ -37,13 +37,13 @@ public class UserController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("api_key: " + apiKey);
     }
 
-    @DeleteMapping(value = "/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable long id) {
-        if(userService.idExists(id))
-        {
-            userService.deleteUser(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.notFound().build();
-    }
+//    @DeleteMapping(value = "/{id}")
+//    public ResponseEntity<String> deleteUser(@PathVariable long id) {
+//        if(userService.idExists(id))
+//        {
+//            userService.deleteUser(id);
+//            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+//        }
+//        return ResponseEntity.notFound().build();
+//    }
 }

@@ -1,5 +1,12 @@
 package ch.hearc.mbu.repository.user;
 
+import ch.hearc.mbu.repository.note.Note;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-public interface UserRepository extends CrudRepository<User, Long> {}
+import java.util.Collection;
+
+public interface UserRepository extends CrudRepository<User, Long> {
+    @Query("SELECT u FROM User u WHERE u.apiKey LIKE ?1")
+    Collection<User> findUserByApiKey(String apiKey);
+}

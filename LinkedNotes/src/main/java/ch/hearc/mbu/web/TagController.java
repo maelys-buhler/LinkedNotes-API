@@ -1,8 +1,12 @@
 package ch.hearc.mbu.web;
 
 import ch.hearc.mbu.repository.tag.Tag;
+import ch.hearc.mbu.repository.user.User;
 import ch.hearc.mbu.service.tag.TagService;
+import ch.hearc.mbu.service.user.UserService;
+import ch.hearc.mbu.web.helper.AuthentificationHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,19 +14,30 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/tags")
+@RequestMapping(value = "/{api_key}/tags")
 public class TagController {
     @Autowired
     TagService tagService;
-
+    @Autowired
+    AuthentificationHelper authentificationHelper;
     @GetMapping(value = "/")
-    public ResponseEntity<Iterable<Tag>> getTags() {
+    public ResponseEntity<Iterable<Tag>> getTags(@PathVariable String api_key) {
+        User user = authentificationHelper.getUserFromApiKey(api_key);
+        if(user == null)
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         Iterable<Tag> tags = tagService.getTags();
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(tags);
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Tag> getTag(@PathVariable long id) {
+    public ResponseEntity<Tag> getTag(@PathVariable long id, @PathVariable String api_key) {
+        User user = authentificationHelper.getUserFromApiKey(api_key);
+        if(user == null)
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         Optional<Tag> tag = tagService.getTag(id);
         if(tag.isPresent())
         {
@@ -32,7 +47,12 @@ public class TagController {
     }
 
     @PostMapping(value = "/", consumes = "application/json")
-    public ResponseEntity<String> addTag(@RequestBody Tag tag) {
+    public ResponseEntity<String> addTag(@RequestBody Tag tag, @PathVariable String api_key) {
+        User user = authentificationHelper.getUserFromApiKey(api_key);
+        if(user == null)
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         if (tag.getName() == null) {
             return ResponseEntity.badRequest().body("Name is null");
         }

@@ -18,6 +18,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> getUserByApiKey(String apiKey) {
+        return userRepository.findUserByApiKey(apiKey).stream().findFirst();
+    }
+
+    @Override
     public User addUser(User user) {
         return userRepository.save(user);
     }

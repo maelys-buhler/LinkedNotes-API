@@ -10,7 +10,10 @@ public class AuthentificationHelper {
     @Autowired
     private UserService userService;
     public User getUserFromApiKey(String apiKey) {
-
+        if(apiKey != null)
+        {
+            return userService.getUserByApiKey(apiKey).orElse(null);
+        }
         return null;
     }
 }
