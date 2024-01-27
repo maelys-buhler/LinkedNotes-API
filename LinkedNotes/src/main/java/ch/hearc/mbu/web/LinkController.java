@@ -1,6 +1,7 @@
 package ch.hearc.mbu.web;
 
 import ch.hearc.mbu.repository.link.Link;
+import ch.hearc.mbu.repository.note.Note;
 import ch.hearc.mbu.repository.user.User;
 import ch.hearc.mbu.service.link.LinkService;
 import ch.hearc.mbu.service.note.NoteService;
@@ -32,7 +33,7 @@ public class LinkController {
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Iterable<Link> links = linkService.getLinks();
+        Iterable<Link> links = linkService.getLinksOfUser(api_key);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(links);
     }
 
@@ -43,12 +44,20 @@ public class LinkController {
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Link> link = linkService.getLink(id);
-        if(link.isPresent())
+        Optional<Link> optionalLink = linkService.getLink(id);
+        if(!optionalLink.isPresent())
         {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(link.get());
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        Link link = optionalLink.get();
+        Note note1 = noteService.getNote(link.getNote1().getId()).orElse(null);
+        Note note2 = noteService.getNote(link.getNote2().getId()).orElse(null);
+        if(!note1.getUser().equals(user) || !note2.getUser().equals(user))
+        {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(link);
     }
 
     //TODO
@@ -68,6 +77,16 @@ public class LinkController {
         if (link.getType() == null || link.getName() == null || link.getNote1()== null || link.getNote2() == null) {
             return ResponseEntity.badRequest().body("Title, name or one of the note is null");
         }
+        Note note1 = noteService.getNote(link.getNote1().getId()).orElse(null);
+        Note note2 = noteService.getNote(link.getNote2().getId()).orElse(null);
+        if(note1 == null || note2 == null)
+        {
+            return ResponseEntity.badRequest().body("One of the notes does not exist");
+        }
+        if(!note1.getUser().equals(user) || !note2.getUser().equals(user))
+        {
+            return ResponseEntity.badRequest().body("One of the notes does not belong to the user");
+        }
         Long id = linkService.addLink(link);
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"id\": " + id + "}");
@@ -80,7 +99,7 @@ public class LinkController {
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if (!linkService.idExists(link.getId()) || link.getType() == null || link.getName() == null || link.getNote1()== null || link.getNote2() == null) {
+        if (!linkService.idExists(link.getId()) || link.getType() == null || link.getName() == null) {
             return ResponseEntity.badRequest().body(null);
         }
         try {
@@ -95,6 +114,7 @@ public class LinkController {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<String> deleteLink(@PathVariable long id, @PathVariable String api_key) {
+        //TODO test and fix
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
