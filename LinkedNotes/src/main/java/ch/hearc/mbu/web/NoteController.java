@@ -5,6 +5,7 @@ import ch.hearc.mbu.repository.user.User;
 import ch.hearc.mbu.service.note.NoteService;
 import ch.hearc.mbu.service.user.UserService;
 import ch.hearc.mbu.web.helper.AuthentificationHelper;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,7 +23,7 @@ public class NoteController {
     UserService userService;
     @Autowired
     AuthentificationHelper authentificationHelper;
-    //TODO only let the user access his own notes
+
     @GetMapping(value = "/")
     public ResponseEntity<Iterable<Note>> getNotesOfUser(@PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
@@ -30,7 +31,7 @@ public class NoteController {
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Iterable<Note> notes = noteService.getNotes();
+        Iterable<Note> notes = noteService.getNotesOfUser(api_key);
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(notes);
     }
 
@@ -42,11 +43,15 @@ public class NoteController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         Optional<Note> note = noteService.getNote(id);
-        if(note.isPresent())
+        if(note.isEmpty())
         {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(note.get());
+            return ResponseEntity.notFound().build();
+
         }
-        return ResponseEntity.notFound().build();
+        if (!note.get().getUser().getApiKey().equals(api_key)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(note.get());
     }
 
     @PostMapping(value = "/", consumes = "application/json")
@@ -59,8 +64,8 @@ public class NoteController {
         if (note.getTitle() == null || note.getContent() == null) {
             return ResponseEntity.badRequest().body("Title or content is null");
         }
+        note.setUser(user);
         Long id = noteService.addNote(note);
-
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"id\": " + id + "}");
     }
 
@@ -74,11 +79,17 @@ public class NoteController {
         if (!noteService.idExists(note.getId()) || note.getTitle() == null || note.getContent() == null) {
             return ResponseEntity.badRequest().body(null);
         }
+        Note actualNote = noteService.getNote(note.getId()).get();
+        if(!actualNote.getUser().getApiKey().equals(api_key))
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         try {
             noteService.updateNote(note);
         }
         catch (Exception e)
         {
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(null);
         }
         //FIXME return note when n to n relationships are implemented
@@ -88,11 +99,16 @@ public class NoteController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<String> deleteNoteOfUser(@PathVariable long id, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
-        if(user == null)
-        {
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if(noteService.idExists(id)){
+        Note note = noteService.getNote(id).orElse(null);
+        if (note != null)
+        {
+            if(!note.getUser().getApiKey().equals(api_key))
+            {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
             noteService.deleteNote(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
