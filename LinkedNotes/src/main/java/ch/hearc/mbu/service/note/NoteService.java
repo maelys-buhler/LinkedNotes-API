@@ -11,5 +11,6 @@ public interface NoteService {
     public void updateNote(Note note);
     public void deleteNote(long id);
     public Iterable<Note> getNotes();
+    public Iterable<Note> getNotesOfUser(String userId);
     public boolean idExists(long id);
 }

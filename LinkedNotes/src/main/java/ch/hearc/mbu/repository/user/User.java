@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 @Entity
 @Table(name = "users")
 public class User {
-
     private final int API_KEY_LENGTH = 32;
 
     @Id

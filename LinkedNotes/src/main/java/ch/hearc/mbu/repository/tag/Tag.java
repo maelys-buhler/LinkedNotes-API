@@ -1,6 +1,7 @@
 package ch.hearc.mbu.repository.tag;
 
 import ch.hearc.mbu.repository.note.Note;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -8,14 +9,16 @@ import java.util.stream.Stream;
 
 @Entity
 @Table(name = "tags")
+@JsonSerialize(using = TagSerializer.class)
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private String name;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "tags")
     private Set<Note> notes;
 
     //GETTERS AND SETTERS
@@ -30,8 +33,8 @@ public class Tag {
         this.name = name;
     }
 
-    public Stream<Note> getNotes()
+    public Iterable<Note> getNotes()
     {
-        return this.notes.stream();
+        return this.notes;
     }
 }
