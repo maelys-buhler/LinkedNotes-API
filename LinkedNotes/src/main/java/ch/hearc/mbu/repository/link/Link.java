@@ -13,7 +13,7 @@ public class Link {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Color color;
+    private String color;
 
     @ManyToOne
     @JoinColumn(name = "type_id", referencedColumnName = "id")
@@ -33,7 +33,7 @@ public class Link {
         return this.name;
     }
 
-    public Color getColor() {
+    public String getColor() {
         return this.color;
     }
 
@@ -53,7 +53,9 @@ public class Link {
         this.name = name;
     }
 
-    public void setColor(Color color) {
+    public void setColor(String color) {
+        if(color.length() != 7 && Color.getColor(color) == null && !color.startsWith("#"))
+            throw new IllegalArgumentException("Color must be in the format #RRGGBB");
         this.color = color;
     }
 

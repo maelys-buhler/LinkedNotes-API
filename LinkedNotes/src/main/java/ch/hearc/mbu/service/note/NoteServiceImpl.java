@@ -25,9 +25,12 @@ public class NoteServiceImpl implements NoteService{
     //TODO check if useful or not, if not delete
     @Override
     public void updateNote(Note note) {
-        if(noteRepository.existsById(note.getId()))
+        Note actualNote = noteRepository.findById(note.getId()).orElse(null);
+        if(actualNote != null)
         {
-            noteRepository.save(note);
+            actualNote.setTitle(note.getTitle());
+            actualNote.setContent(note.getContent());
+            noteRepository.save(actualNote);
         }
         else
         {
@@ -43,6 +46,11 @@ public class NoteServiceImpl implements NoteService{
     @Override
     public Iterable<Note> getNotes() {
         return noteRepository.findAll();
+    }
+
+    @Override
+    public Iterable<Note> getNotesOfUser(String apiKey) {
+        return noteRepository.findAllByUser(apiKey);
     }
 
     @Override
