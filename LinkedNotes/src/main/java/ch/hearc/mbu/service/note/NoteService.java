@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface NoteService {
     public Note getNote(long id);
-    public Long addNote(Note note);
+    public Note addNote(Note note);
     public void updateNote(Note note);
     public void deleteNote(long id);
     public Iterable<Note> getNotes();

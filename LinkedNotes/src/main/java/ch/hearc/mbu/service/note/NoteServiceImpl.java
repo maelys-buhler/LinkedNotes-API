@@ -18,8 +18,8 @@ public class NoteServiceImpl implements NoteService{
     }
 
     @Override
-    public Long addNote(Note note) {
-        return noteRepository.save(note).getId();
+    public Note addNote(Note note) {
+        return noteRepository.save(note);
     }
 
     //TODO check if useful or not, if not delete

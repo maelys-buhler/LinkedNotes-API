@@ -19,8 +19,8 @@ public class LinkServiceImpl implements LinkService{
     }
 
     @Override
-    public Long addLink(Link link) {
-        return linkRepository.save(link).getId();
+    public Link addLink(Link link) {
+        return linkRepository.save(link);
     }
 
     //TODO check if useful or not, if not delete

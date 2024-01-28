@@ -129,22 +129,22 @@ public class NoteController {
     }
 
     @PostMapping(value = "", consumes = "application/json")
-    public ResponseEntity<String> addNoteOfUser(@RequestBody Note note, @PathVariable String api_key) {
+    public ResponseEntity<Note> addNoteOfUser(@RequestBody Note note, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         if (note.getTitle() == null || note.getContent() == null) {
-            return ResponseEntity.badRequest().body("Title or content is null");
+            return ResponseEntity.badRequest().build();
         }
         note.setUser(user);
-        Long id = noteService.addNote(note);
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"id\": " + id + "}");
+        Note createdNote = noteService.addNote(note);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(createdNote);
     }
 
     @PutMapping(value = "", consumes = "application/json")
-    public ResponseEntity<String> updateNote(@RequestBody Note note, @PathVariable String api_key) {
+    public ResponseEntity<Note> updateNote(@RequestBody Note note, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
@@ -166,8 +166,7 @@ public class NoteController {
             System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(null);
         }
-        //FIXME return note when n to n relationships are implemented
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"id\": " + note.getId() + "}");
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(note);
     }
 
     @DeleteMapping(value = "/{id}")

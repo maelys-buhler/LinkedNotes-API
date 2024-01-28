@@ -23,7 +23,6 @@ public class TypeController {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
-            System.out.println("User is null");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         Iterable<Type> types = typeService.getTypes();
@@ -45,23 +44,24 @@ public class TypeController {
     }
 
     @PostMapping(value = "", consumes = "application/json")
-    public ResponseEntity<String> addType(@RequestBody Type type, @PathVariable String api_key) {
+    public ResponseEntity<Type> addType(@RequestBody Type type, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         if (type.getName() == null) {
-            return ResponseEntity.badRequest().body("Name is null");
+            return ResponseEntity.badRequest().build();
         }
+        Type createdType = null;
         try {
-            typeService.addType(type);
+            createdType = typeService.addType(type);
         }
         catch (Exception e)
         {
-            return ResponseEntity.badRequest().body("Type already exists");
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().contentType(org.springframework.http.MediaType.APPLICATION_JSON).body("{\"id\": " + type.getId() + "}");
+        return ResponseEntity.ok().contentType(org.springframework.http.MediaType.APPLICATION_JSON).body(createdType);
     }
 
 }

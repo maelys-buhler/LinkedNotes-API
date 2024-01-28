@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public interface LinkService {
     public Link getLink(long id);
-    public Long addLink(Link link);
+    public Link addLink(Link link);
     public void updateLink(Link link);
     public void deleteLink(long id);
     public Iterable<Link> getLinks();

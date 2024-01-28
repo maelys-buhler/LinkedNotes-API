@@ -50,23 +50,23 @@ public class TagController {
     }
 
     @PostMapping(value = "", consumes = "application/json")
-    public ResponseEntity<String> addTag(@RequestBody Tag tag, @PathVariable String api_key) {
+    public ResponseEntity<Tag> addTag(@RequestBody Tag tag, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         if (tag.getName() == null) {
-            return ResponseEntity.badRequest().body("Name is null");
+            return ResponseEntity.badRequest().build();
         }
         try {
             tagService.addTag(tag);
         }
         catch (Exception e)
         {
-            return ResponseEntity.badRequest().body("Tag already exists");
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"id\": " + tag.getId() + "}");
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(tag);
     }
 
     @GetMapping(value = "/{id}/notes")
