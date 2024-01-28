@@ -2,9 +2,6 @@ package ch.hearc.mbu.service.type;
 
 import ch.hearc.mbu.repository.type.Type;
 
-import java.util.Objects;
-import java.util.Optional;
-
 public interface TypeService {
     public Type getType(long id);
     public Type addType(Type type);

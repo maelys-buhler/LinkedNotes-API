@@ -7,14 +7,12 @@ import ch.hearc.mbu.service.link.LinkService;
 import ch.hearc.mbu.service.note.NoteService;
 import ch.hearc.mbu.service.user.UserService;
 import ch.hearc.mbu.web.helper.AuthentificationHelper;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -151,22 +149,23 @@ public class NoteController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         Note actualNote = noteService.getNote(note.getId());
-        if (!(noteService == null) || note.getTitle() == null || note.getContent() == null) {
+        if (actualNote == null || note.getTitle() == null || note.getContent() == null) {
             return ResponseEntity.badRequest().body(null);
         }
         if(!actualNote.getUser().getApiKey().equals(api_key))
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        Note updatedNote = null;
         try {
-            noteService.updateNote(note);
+            updatedNote = noteService.updateNote(note);
         }
         catch (Exception e)
         {
             System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(null);
         }
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(note);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(updatedNote);
     }
 
     @DeleteMapping(value = "/{id}")

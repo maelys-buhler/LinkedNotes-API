@@ -21,11 +21,6 @@ public class NoteSerializer extends StdSerializer<Note>{
         jsonGenerator.writeNumberField("id", note.getId());
         jsonGenerator.writeStringField("title", note.getTitle());
         jsonGenerator.writeStringField("content", note.getContent());
-        jsonGenerator.writeArrayFieldStart("tags");
-        for (var tag : note.getTags()) {
-            jsonGenerator.writeObject(tag);
-        }
-        jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
     }
 }

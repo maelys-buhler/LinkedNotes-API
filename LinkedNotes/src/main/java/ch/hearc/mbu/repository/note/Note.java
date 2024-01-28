@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 
 import java.util.Set;
-import java.util.stream.Stream;
 
 @Entity
 @Table(name = "notes")

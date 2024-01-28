@@ -5,8 +5,6 @@ import ch.hearc.mbu.repository.tag.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class TagServiceImpl implements TagService{
     @Autowired

@@ -3,7 +3,6 @@ package ch.hearc.mbu.repository.user;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.stereotype.Component;
 
 @Entity
 @Table(name = "users")

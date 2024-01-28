@@ -59,13 +59,6 @@ public class LinkController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(link);
     }
 
-    //TODO
-//    @GetMapping(value = "/note/{id}")
-//    public ResponseEntity<Iterable<Link>> getLinksOfNoteId(@PathVariable long id) {
-//        Iterable<Link> links = linkService.getLinksOfNoteId(id);
-//        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(links);
-//    }
-
     @PostMapping(value = "", consumes = "application/json")
     public ResponseEntity<Link> addLink(@RequestBody Link link, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
@@ -86,7 +79,16 @@ public class LinkController {
         {
             return ResponseEntity.badRequest().build();
         }
-        Link createdLink = linkService.addLink(link);
+        Link createdLink = null;
+        try
+        {
+            createdLink = linkService.addLink(link);
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.badRequest().build();
+        }
+
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(createdLink);
     }
@@ -99,6 +101,7 @@ public class LinkController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         if (!linkService.idExists(link.getId()) || link.getType() == null || link.getName() == null) {
+            System.out.println("Link does not exist, or type or name is null");
             return ResponseEntity.badRequest().body(null);
         }
         Link updatedLink = null;
@@ -107,6 +110,7 @@ public class LinkController {
         }
         catch (Exception e)
         {
+            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(updatedLink);
@@ -114,7 +118,6 @@ public class LinkController {
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity deleteLink(@PathVariable long id, @PathVariable String api_key) {
-        //TODO test and fix
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
