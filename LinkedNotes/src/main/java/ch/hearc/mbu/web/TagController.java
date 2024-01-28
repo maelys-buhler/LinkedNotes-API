@@ -4,16 +4,13 @@ import ch.hearc.mbu.repository.note.Note;
 import ch.hearc.mbu.repository.tag.Tag;
 import ch.hearc.mbu.repository.user.User;
 import ch.hearc.mbu.service.tag.TagService;
-import ch.hearc.mbu.service.user.UserService;
 import ch.hearc.mbu.web.helper.AuthentificationHelper;
-import org.apache.commons.lang3.stream.Streams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -59,14 +56,15 @@ public class TagController {
         if (tag.getName() == null) {
             return ResponseEntity.badRequest().build();
         }
+        Tag createdTag = null;
         try {
-            tagService.addTag(tag);
+            createdTag = tagService.addTag(tag);
         }
         catch (Exception e)
         {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(tag);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(createdTag);
     }
 
     @GetMapping(value = "/{id}/notes")

@@ -3,10 +3,6 @@ package ch.hearc.mbu.service.link;
 import ch.hearc.mbu.repository.link.Link;
 import ch.hearc.mbu.repository.note.Note;
 
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 public interface LinkService {
     public Link getLink(long id);
     public Link addLink(Link link);

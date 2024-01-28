@@ -2,9 +2,6 @@ package ch.hearc.mbu.service.note;
 
 import ch.hearc.mbu.repository.note.Note;
 
-import java.util.Iterator;
-import java.util.Optional;
-
 public interface NoteService {
     public Note getNote(long id);
     public Note addNote(Note note);

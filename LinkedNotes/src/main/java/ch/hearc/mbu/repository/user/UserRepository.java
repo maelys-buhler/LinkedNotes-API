@@ -1,6 +1,5 @@
 package ch.hearc.mbu.repository.user;
 
-import ch.hearc.mbu.repository.note.Note;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
