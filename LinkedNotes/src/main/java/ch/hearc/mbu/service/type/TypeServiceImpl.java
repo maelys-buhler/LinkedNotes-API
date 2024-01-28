@@ -21,17 +21,9 @@ public class TypeServiceImpl implements TypeService{
         return typeRepository.save(type);
     }
 
-    //TODO check if useful or not, if not delete
     @Override
-    public void updateType(Type type) {
-        if(typeRepository.existsById(type.getId()))
-        {
-            typeRepository.save(type);
-        }
-        else
-        {
-            throw new IllegalArgumentException("Type does not exist");
-        }
+    public Type updateType(Type type) {
+        return null;
     }
 
     @Override

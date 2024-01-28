@@ -22,15 +22,15 @@ public class NoteServiceImpl implements NoteService{
         return noteRepository.save(note);
     }
 
-    //TODO check if useful or not, if not delete
     @Override
-    public void updateNote(Note note) {
+    public Note updateNote(Note note) {
         Note actualNote = noteRepository.findById(note.getId()).orElse(null);
         if(actualNote != null)
         {
             actualNote.setTitle(note.getTitle());
             actualNote.setContent(note.getContent());
             noteRepository.save(actualNote);
+            return actualNote;
         }
         else
         {

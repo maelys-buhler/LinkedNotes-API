@@ -23,16 +23,16 @@ public class LinkServiceImpl implements LinkService{
         return linkRepository.save(link);
     }
 
-    //TODO check if useful or not, if not delete
     @Override
-    public void updateLink(Link link) {
+    public Link updateLink(Link link) {
         Link actualLink = linkRepository.findById(link.getId()).orElse(null);
         if(linkRepository.existsById(link.getId()))
         {
             actualLink.setName(link.getName());
             actualLink.setColor(link.getColor());
             actualLink.setType(link.getType());
-            linkRepository.save(link);
+            linkRepository.save(actualLink);
+            return actualLink;
         }
         else
         {

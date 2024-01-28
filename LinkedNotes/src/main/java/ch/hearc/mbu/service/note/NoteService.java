@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface NoteService {
     public Note getNote(long id);
     public Note addNote(Note note);
-    public void updateNote(Note note);
+    public Note updateNote(Note note);
     public void deleteNote(long id);
     public Iterable<Note> getNotes();
     public Iterable<Note> getNotesOfUser(String userId);

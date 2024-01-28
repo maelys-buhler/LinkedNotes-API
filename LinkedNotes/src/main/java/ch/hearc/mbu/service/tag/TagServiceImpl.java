@@ -21,12 +21,14 @@ public class TagServiceImpl implements TagService{
         return tagRepository.save(tag);
     }
 
-    //TODO check if useful or not, if not delete
     @Override
-    public void updateTag(Tag tag) {
-        if(tagRepository.existsById(tag.getId()))
+    public Tag updateTag(Tag tag) {
+        Tag actualTag = tagRepository.findById(tag.getId()).orElse(null);
+        if(actualTag != null)
         {
-            tagRepository.save(tag);
+            actualTag.setName(tag.getName());
+            tagRepository.save(actualTag);
+            return actualTag;
         }
         else
         {
