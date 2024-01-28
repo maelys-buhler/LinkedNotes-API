@@ -12,13 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping(value = "/{api_key}/links")
 public class LinkController {
-    //TODO only let the user access his own links
-    String apiKey;
     @Autowired
     LinkService linkService;
     @Autowired
@@ -44,17 +40,20 @@ public class LinkController {
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Link> optionalLink = linkService.getLink(id);
-        if(!optionalLink.isPresent())
+        Link link = linkService.getLink(id);
+        if(link == null)
         {
             return ResponseEntity.notFound().build();
         }
-        Link link = optionalLink.get();
-        Note note1 = noteService.getNote(link.getNote1().getId()).orElse(null);
-        Note note2 = noteService.getNote(link.getNote2().getId()).orElse(null);
+        Note note1 = noteService.getNote(link.getNote1().getId());
+        Note note2 = noteService.getNote(link.getNote2().getId());
+        if(note1 == null || note2 == null)
+        {
+            return ResponseEntity.badRequest().body(null);
+        }
         if(!note1.getUser().equals(user) || !note2.getUser().equals(user))
         {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(link);
@@ -77,8 +76,8 @@ public class LinkController {
         if (link.getType() == null || link.getName() == null || link.getNote1()== null || link.getNote2() == null) {
             return ResponseEntity.badRequest().body("Title, name or one of the note is null");
         }
-        Note note1 = noteService.getNote(link.getNote1().getId()).orElse(null);
-        Note note2 = noteService.getNote(link.getNote2().getId()).orElse(null);
+        Note note1 = noteService.getNote(link.getNote1().getId());
+        Note note2 = noteService.getNote(link.getNote2().getId());
         if(note1 == null || note2 == null)
         {
             return ResponseEntity.badRequest().body("One of the notes does not exist");

@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface LinkService {
-    public Optional<Link> getLink(long id);
+    public Link getLink(long id);
     public Long addLink(Link link);
     public void updateLink(Link link);
     public void deleteLink(long id);

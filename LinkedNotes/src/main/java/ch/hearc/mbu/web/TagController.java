@@ -41,12 +41,12 @@ public class TagController {
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Tag> tag = tagService.getTag(id);
-        if(tag.isPresent())
+        Tag tag = tagService.getTag(id);
+        if(tag == null)
         {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(tag.get());
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(tag);
     }
 
     @PostMapping(value = "", consumes = "application/json")
@@ -76,13 +76,13 @@ public class TagController {
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Tag> tag = tagService.getTag(id);
-        if(tag.isPresent())
+        Tag tag = tagService.getTag(id);
+        if(tag == null)
         {
-            Iterable<Note> notes = tag.get().getNotes();
-            Iterable<Note> notesOfUser = StreamSupport.stream(notes.spliterator(), false).filter(note -> note.getUser().equals(user)).toList();
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(notesOfUser);
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        Iterable<Note> notes = tag.getNotes();
+        Iterable<Note> notesOfUser = StreamSupport.stream(notes.spliterator(), false).filter(note -> note.getUser().equals(user)).toList();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(notesOfUser);
     }
 }

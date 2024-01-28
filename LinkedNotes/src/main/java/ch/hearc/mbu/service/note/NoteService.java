@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.Optional;
 
 public interface NoteService {
-    public Optional<Note> getNote(long id);
+    public Note getNote(long id);
     public Long addNote(Note note);
     public void updateNote(Note note);
     public void deleteNote(long id);

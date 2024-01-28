@@ -12,8 +12,8 @@ public class TagServiceImpl implements TagService{
     @Autowired
     private TagRepository tagRepository;
     @Override
-    public Optional<Tag> getTag(long id) {
-        return Optional.ofNullable(tagRepository.findById(id).orElse(null));
+    public Tag getTag(long id) {
+        return tagRepository.findById(id).orElse(null);
     }
 
     @Override

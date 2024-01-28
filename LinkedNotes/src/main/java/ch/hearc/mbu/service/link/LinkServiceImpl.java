@@ -14,8 +14,8 @@ public class LinkServiceImpl implements LinkService{
     @Autowired
     private LinkRepository linkRepository;
     @Override
-    public Optional<Link> getLink(long id) {
-        return Optional.ofNullable(linkRepository.findById(id).orElse(null));
+    public Link getLink(long id) {
+        return linkRepository.findById(id).orElse(null);
     }
 
     @Override

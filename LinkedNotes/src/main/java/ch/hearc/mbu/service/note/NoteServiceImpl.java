@@ -13,8 +13,8 @@ public class NoteServiceImpl implements NoteService{
     @Autowired
     private NoteRepository noteRepository;
     @Override
-    public Optional<Note> getNote(long id) {
-        return Optional.ofNullable(noteRepository.findById(id).orElse(null));
+    public Note getNote(long id) {
+        return noteRepository.findById(id).orElse(null);
     }
 
     @Override

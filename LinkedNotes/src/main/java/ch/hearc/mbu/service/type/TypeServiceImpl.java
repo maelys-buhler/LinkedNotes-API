@@ -12,8 +12,8 @@ public class TypeServiceImpl implements TypeService{
     @Autowired
     private TypeRepository typeRepository;
     @Override
-    public Optional<Type> getType(long id) {
-        return Optional.ofNullable(typeRepository.findById(id).orElse(null));
+    public Type getType(long id) {
+        return typeRepository.findById(id).orElse(null);
     }
 
     @Override
