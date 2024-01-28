@@ -29,7 +29,7 @@ public class NoteController {
     @Autowired
     AuthentificationHelper authentificationHelper;
 
-    @GetMapping(value = "/")
+    @GetMapping(value = "")
     public ResponseEntity<Iterable<Note>> getNotesOfUser(@PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
@@ -47,16 +47,16 @@ public class NoteController {
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Note> note = noteService.getNote(id);
-        if(note.isEmpty())
+        Note note = noteService.getNote(id);
+        if(note == null)
         {
             return ResponseEntity.notFound().build();
 
         }
-        if (!note.get().getUser().getApiKey().equals(api_key)) {
+        if (!note.getUser().getApiKey().equals(api_key)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(note.get());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(note);
     }
 
     @GetMapping(value = "/{id}/linked/")
@@ -66,18 +66,18 @@ public class NoteController {
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Note> note = noteService.getNote(id);
-        if(note.isEmpty())
+        Note note = noteService.getNote(id);
+        if(note == null)
         {
             return ResponseEntity.notFound().build();
 
         }
-        if (!note.get().getUser().getApiKey().equals(api_key)) {
+        if (!note.getUser().getApiKey().equals(api_key)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Iterable<Link> linksOfNote = linkService.getLinksOfNote(note.get());
+        Iterable<Link> linksOfNote = linkService.getLinksOfNote(note);
         Iterable<Note> linkedNotes = StreamSupport.stream(linksOfNote.spliterator(), false).map(link -> {
-            if (link.getNote1().equals(note.get())) {
+            if (link.getNote1().equals(note)) {
                 return link.getNote2();
             } else {
                 return link.getNote1();
@@ -86,74 +86,74 @@ public class NoteController {
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(linkedNotes);
     }
-    @GetMapping(value = "/{id}/outgoinglinked/")
+    @GetMapping(value = "/{id}/outgoinglinked")
     public ResponseEntity<Iterable<Note>> getOutgoingLinkedNotes(@PathVariable long id, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Note> note = noteService.getNote(id);
-        if(note.isEmpty())
+        Note note = noteService.getNote(id);
+        if(note == null)
         {
             return ResponseEntity.notFound().build();
 
         }
-        if (!note.get().getUser().getApiKey().equals(api_key)) {
+        if (!note.getUser().getApiKey().equals(api_key)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Iterable<Link> linksOfNote = linkService.getOutgoingLinksOfNote(note.get());
+        Iterable<Link> linksOfNote = linkService.getOutgoingLinksOfNote(note);
         Iterable<Note> linkedNotes = StreamSupport.stream(linksOfNote.spliterator(), false).map(Link::getNote2).toList();
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(linkedNotes);
     }
 
-    @GetMapping(value = "/{id}/incominglinked/")
+    @GetMapping(value = "/{id}/incominglinked")
     public ResponseEntity<Iterable<Note>> getIncomingLinkedNotes(@PathVariable long id, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Note> note = noteService.getNote(id);
-        if(note.isEmpty())
+        Note note = noteService.getNote(id);
+        if(note == null)
         {
             return ResponseEntity.notFound().build();
 
         }
-        if (!note.get().getUser().getApiKey().equals(api_key)) {
+        if (!note.getUser().getApiKey().equals(api_key)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Iterable<Link> linksOfNote = linkService.getIncomingLinksOfNote(note.get());
+        Iterable<Link> linksOfNote = linkService.getIncomingLinksOfNote(note);
         Iterable<Note> linkedNotes = StreamSupport.stream(linksOfNote.spliterator(), false).map(Link::getNote1).toList();
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(linkedNotes);
     }
 
-    @PostMapping(value = "/", consumes = "application/json")
-    public ResponseEntity<String> addNoteOfUser(@RequestBody Note note, @PathVariable String api_key) {
+    @PostMapping(value = "", consumes = "application/json")
+    public ResponseEntity<Note> addNoteOfUser(@RequestBody Note note, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         if (note.getTitle() == null || note.getContent() == null) {
-            return ResponseEntity.badRequest().body("Title or content is null");
+            return ResponseEntity.badRequest().build();
         }
         note.setUser(user);
-        Long id = noteService.addNote(note);
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"id\": " + id + "}");
+        Note createdNote = noteService.addNote(note);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(createdNote);
     }
 
-    @PutMapping(value = "/", consumes = "application/json")
-    public ResponseEntity<String> updateNote(@RequestBody Note note, @PathVariable String api_key) {
+    @PutMapping(value = "", consumes = "application/json")
+    public ResponseEntity<Note> updateNote(@RequestBody Note note, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if (!noteService.idExists(note.getId()) || note.getTitle() == null || note.getContent() == null) {
+        Note actualNote = noteService.getNote(note.getId());
+        if (!(noteService == null) || note.getTitle() == null || note.getContent() == null) {
             return ResponseEntity.badRequest().body(null);
         }
-        Note actualNote = noteService.getNote(note.getId()).get();
         if(!actualNote.getUser().getApiKey().equals(api_key))
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -166,8 +166,7 @@ public class NoteController {
             System.out.println(e.getMessage());
             return ResponseEntity.badRequest().body(null);
         }
-        //FIXME return note when n to n relationships are implemented
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"id\": " + note.getId() + "}");
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(note);
     }
 
     @DeleteMapping(value = "/{id}")
@@ -176,16 +175,16 @@ public class NoteController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Note note = noteService.getNote(id).orElse(null);
-        if (note != null)
+        Note note = noteService.getNote(id);
+        if (note == null)
         {
-            if(!note.getUser().getApiKey().equals(api_key))
-            {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-            noteService.deleteNote(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        if(!note.getUser().getApiKey().equals(api_key))
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        noteService.deleteNote(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

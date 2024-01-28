@@ -12,8 +12,8 @@ public class TagServiceImpl implements TagService{
     @Autowired
     private TagRepository tagRepository;
     @Override
-    public Optional<Tag> getTag(long id) {
-        return Optional.ofNullable(tagRepository.findById(id).orElse(null));
+    public Tag getTag(long id) {
+        return tagRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -21,12 +21,14 @@ public class TagServiceImpl implements TagService{
         return tagRepository.save(tag);
     }
 
-    //TODO check if useful or not, if not delete
     @Override
-    public void updateTag(Tag tag) {
-        if(tagRepository.existsById(tag.getId()))
+    public Tag updateTag(Tag tag) {
+        Tag actualTag = tagRepository.findById(tag.getId()).orElse(null);
+        if(actualTag != null)
         {
-            tagRepository.save(tag);
+            actualTag.setName(tag.getName());
+            tagRepository.save(actualTag);
+            return actualTag;
         }
         else
         {

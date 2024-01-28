@@ -23,7 +23,7 @@ public class TagController {
     TagService tagService;
     @Autowired
     AuthentificationHelper authentificationHelper;
-    @GetMapping(value = "/")
+    @GetMapping(value = "")
     public ResponseEntity<Iterable<Tag>> getTags(@PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
@@ -41,32 +41,32 @@ public class TagController {
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Tag> tag = tagService.getTag(id);
-        if(tag.isPresent())
+        Tag tag = tagService.getTag(id);
+        if(tag == null)
         {
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(tag.get());
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(tag);
     }
 
-    @PostMapping(value = "/", consumes = "application/json")
-    public ResponseEntity<String> addTag(@RequestBody Tag tag, @PathVariable String api_key) {
+    @PostMapping(value = "", consumes = "application/json")
+    public ResponseEntity<Tag> addTag(@RequestBody Tag tag, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         if (tag.getName() == null) {
-            return ResponseEntity.badRequest().body("Name is null");
+            return ResponseEntity.badRequest().build();
         }
         try {
             tagService.addTag(tag);
         }
         catch (Exception e)
         {
-            return ResponseEntity.badRequest().body("Tag already exists");
+            return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"id\": " + tag.getId() + "}");
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(tag);
     }
 
     @GetMapping(value = "/{id}/notes")
@@ -76,13 +76,13 @@ public class TagController {
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        Optional<Tag> tag = tagService.getTag(id);
-        if(tag.isPresent())
+        Tag tag = tagService.getTag(id);
+        if(tag == null)
         {
-            Iterable<Note> notes = tag.get().getNotes();
-            Iterable<Note> notesOfUser = StreamSupport.stream(notes.spliterator(), false).filter(note -> note.getUser().equals(user)).toList();
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(notesOfUser);
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.notFound().build();
+        Iterable<Note> notes = tag.getNotes();
+        Iterable<Note> notesOfUser = StreamSupport.stream(notes.spliterator(), false).filter(note -> note.getUser().equals(user)).toList();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(notesOfUser);
     }
 }

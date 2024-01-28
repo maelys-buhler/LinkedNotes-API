@@ -14,25 +14,25 @@ public class LinkServiceImpl implements LinkService{
     @Autowired
     private LinkRepository linkRepository;
     @Override
-    public Optional<Link> getLink(long id) {
-        return Optional.ofNullable(linkRepository.findById(id).orElse(null));
+    public Link getLink(long id) {
+        return linkRepository.findById(id).orElse(null);
     }
 
     @Override
-    public Long addLink(Link link) {
-        return linkRepository.save(link).getId();
+    public Link addLink(Link link) {
+        return linkRepository.save(link);
     }
 
-    //TODO check if useful or not, if not delete
     @Override
-    public void updateLink(Link link) {
+    public Link updateLink(Link link) {
         Link actualLink = linkRepository.findById(link.getId()).orElse(null);
         if(linkRepository.existsById(link.getId()))
         {
             actualLink.setName(link.getName());
             actualLink.setColor(link.getColor());
             actualLink.setType(link.getType());
-            linkRepository.save(link);
+            linkRepository.save(actualLink);
+            return actualLink;
         }
         else
         {

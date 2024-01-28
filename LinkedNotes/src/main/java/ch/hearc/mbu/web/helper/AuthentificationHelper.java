@@ -12,7 +12,7 @@ public class AuthentificationHelper {
     public User getUserFromApiKey(String apiKey) {
         if(apiKey != null)
         {
-            return userService.getUserByApiKey(apiKey).orElse(null);
+            return userService.getUserByApiKey(apiKey);
         }
         return null;
     }

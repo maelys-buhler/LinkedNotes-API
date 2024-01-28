@@ -13,13 +13,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
     @Override
-    public Optional<User> getUser(long id) {
-        return Optional.ofNullable(userRepository.findById(id).orElse(null));
+    public User getUser(long id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     @Override
-    public Optional<User> getUserByApiKey(String apiKey) {
-        return userRepository.findUserByApiKey(apiKey).stream().findFirst();
+    public User getUserByApiKey(String apiKey) {
+        return userRepository.findUserByApiKey(apiKey).stream().findFirst().orElse(null);
     }
 
     @Override

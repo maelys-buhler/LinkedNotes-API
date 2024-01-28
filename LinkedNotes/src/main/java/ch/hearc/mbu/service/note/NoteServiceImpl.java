@@ -13,24 +13,24 @@ public class NoteServiceImpl implements NoteService{
     @Autowired
     private NoteRepository noteRepository;
     @Override
-    public Optional<Note> getNote(long id) {
-        return Optional.ofNullable(noteRepository.findById(id).orElse(null));
+    public Note getNote(long id) {
+        return noteRepository.findById(id).orElse(null);
     }
 
     @Override
-    public Long addNote(Note note) {
-        return noteRepository.save(note).getId();
+    public Note addNote(Note note) {
+        return noteRepository.save(note);
     }
 
-    //TODO check if useful or not, if not delete
     @Override
-    public void updateNote(Note note) {
+    public Note updateNote(Note note) {
         Note actualNote = noteRepository.findById(note.getId()).orElse(null);
         if(actualNote != null)
         {
             actualNote.setTitle(note.getTitle());
             actualNote.setContent(note.getContent());
             noteRepository.save(actualNote);
+            return actualNote;
         }
         else
         {
