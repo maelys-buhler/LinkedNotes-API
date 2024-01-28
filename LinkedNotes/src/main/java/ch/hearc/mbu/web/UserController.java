@@ -21,7 +21,7 @@ public class UserController {
 //        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(userService);
 //    }
 
-    @PostMapping(value = "/", consumes = "application/json")
+    @PostMapping(value = "", consumes = "application/json")
     public ResponseEntity<String> addUser(@RequestBody User user) {
         if (user.getUsername() == null) {
             return ResponseEntity.badRequest().body("Username is null");

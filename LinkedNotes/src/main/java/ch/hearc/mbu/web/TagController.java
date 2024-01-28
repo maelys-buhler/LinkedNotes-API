@@ -23,7 +23,7 @@ public class TagController {
     TagService tagService;
     @Autowired
     AuthentificationHelper authentificationHelper;
-    @GetMapping(value = "/")
+    @GetMapping(value = "")
     public ResponseEntity<Iterable<Tag>> getTags(@PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
@@ -49,7 +49,7 @@ public class TagController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping(value = "/", consumes = "application/json")
+    @PostMapping(value = "", consumes = "application/json")
     public ResponseEntity<String> addTag(@RequestBody Tag tag, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)

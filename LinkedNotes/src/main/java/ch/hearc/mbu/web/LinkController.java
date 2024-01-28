@@ -26,7 +26,7 @@ public class LinkController {
     @Autowired
     AuthentificationHelper authentificationHelper;
 
-    @GetMapping(value = "/")
+    @GetMapping(value = "")
     public ResponseEntity<Iterable<Link>> getLinks(@PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
@@ -67,7 +67,7 @@ public class LinkController {
 //        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(links);
 //    }
 
-    @PostMapping(value = "/", consumes = "application/json")
+    @PostMapping(value = "", consumes = "application/json")
     public ResponseEntity<String> addLink(@RequestBody Link link, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
@@ -92,7 +92,7 @@ public class LinkController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"id\": " + id + "}");
     }
 
-    @PutMapping(value = "/", consumes = "application/json")
+    @PutMapping(value = "", consumes = "application/json")
     public ResponseEntity<String> updateLink(@RequestBody Link link, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)

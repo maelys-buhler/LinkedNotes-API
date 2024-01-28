@@ -29,7 +29,7 @@ public class NoteController {
     @Autowired
     AuthentificationHelper authentificationHelper;
 
-    @GetMapping(value = "/")
+    @GetMapping(value = "")
     public ResponseEntity<Iterable<Note>> getNotesOfUser(@PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
@@ -86,7 +86,7 @@ public class NoteController {
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(linkedNotes);
     }
-    @GetMapping(value = "/{id}/outgoinglinked/")
+    @GetMapping(value = "/{id}/outgoinglinked")
     public ResponseEntity<Iterable<Note>> getOutgoingLinkedNotes(@PathVariable long id, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
@@ -107,7 +107,7 @@ public class NoteController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(linkedNotes);
     }
 
-    @GetMapping(value = "/{id}/incominglinked/")
+    @GetMapping(value = "/{id}/incominglinked")
     public ResponseEntity<Iterable<Note>> getIncomingLinkedNotes(@PathVariable long id, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
@@ -128,7 +128,7 @@ public class NoteController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(linkedNotes);
     }
 
-    @PostMapping(value = "/", consumes = "application/json")
+    @PostMapping(value = "", consumes = "application/json")
     public ResponseEntity<String> addNoteOfUser(@RequestBody Note note, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
@@ -143,7 +143,7 @@ public class NoteController {
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"id\": " + id + "}");
     }
 
-    @PutMapping(value = "/", consumes = "application/json")
+    @PutMapping(value = "", consumes = "application/json")
     public ResponseEntity<String> updateNote(@RequestBody Note note, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)

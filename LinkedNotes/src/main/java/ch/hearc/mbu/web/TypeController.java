@@ -22,7 +22,7 @@ public class TypeController {
     @Autowired
     AuthentificationHelper authentificationHelper;
 
-    @GetMapping(value = "/")
+    @GetMapping(value = "")
     public ResponseEntity<Iterable<Type>> getTypes(@PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
@@ -49,7 +49,7 @@ public class TypeController {
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping(value = "/", consumes = "application/json")
+    @PostMapping(value = "", consumes = "application/json")
     public ResponseEntity<String> addType(@RequestBody Type type, @PathVariable String api_key) {
         User user = authentificationHelper.getUserFromApiKey(api_key);
         if(user == null)
